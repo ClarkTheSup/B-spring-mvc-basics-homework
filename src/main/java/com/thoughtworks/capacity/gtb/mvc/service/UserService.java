@@ -1,6 +1,6 @@
 package com.thoughtworks.capacity.gtb.mvc.service;
 
-import com.thoughtworks.capacity.gtb.mvc.Exception.DuplicatedUsernameException;
+import com.thoughtworks.capacity.gtb.mvc.exception.DuplicatedUsernameException;
 import com.thoughtworks.capacity.gtb.mvc.domain.User;
 import com.thoughtworks.capacity.gtb.mvc.repository.UserListSingletonFactory;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class UserService {
         boolean isDuplicated = userList.stream()
                 .anyMatch(ele -> ele.getUsername().equals(user.getUsername()));
         if (isDuplicated) {
-            throw new DuplicatedUsernameException("用户名重复");
+            throw new DuplicatedUsernameException("用户名已存在");
         } else {
             UserListSingletonFactory.getInstance().add(user);
         }
