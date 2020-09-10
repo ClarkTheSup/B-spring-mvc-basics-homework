@@ -6,20 +6,25 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicatedUsernameException.class)
-    public ResponseEntity duplicatedUsernameExceptionHandler(DuplicatedUsernameException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorMessage().getMessage());
+    public ResponseEntity<ErrorMessage> duplicatedUsernameExceptionHandler(DuplicatedUsernameException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorMessage());
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})
-    public ResponseEntity methodArgumentExceptionHandler(Exception e) {
-        String errorMessage = chooseErrorMessage(e.getMessage());
+    public ResponseEntity<ErrorMessage> validationExceptionHandler(Exception e) {
+        String message = chooseErrorMessage(e.getMessage());
+        ErrorMessage errorMessage = new ErrorMessage(message, 400);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+    }
+
+    @ExceptionHandler(LoginException.class)
+    public ResponseEntity<ErrorMessage> duplicatedUsernameExceptionHandler(LoginException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getErrorMessage());
     }
 
     public String chooseErrorMessage(String errorMessage) {

@@ -18,16 +18,17 @@ public class UserControllerApi {
     UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody User user) {
+    public ResponseEntity register(@RequestBody @Validated User user) {
         userService.addUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/login")
-    public ResponseEntity login(@RequestParam @Pattern(regexp = "^\\w{3,10}$", message = "用户名不合法")
+    public ResponseEntity<User> login(@RequestParam @Pattern(regexp = "^\\w{3,10}$", message = "用户名不合法")
                                             String username,
                                 @RequestParam @Size(min = 5, max = 12,message = "密码不合法")
                                         String password) {
-        return ResponseEntity.status(HttpStatus.OK).build();
+        User user = userService.getUser(username, password);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 }
